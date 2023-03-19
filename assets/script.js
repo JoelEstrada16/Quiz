@@ -33,11 +33,18 @@ var questions = [
       answer: 'console.log',
     },
   ]; 
+var currentQuestioni = 0;
+var chosenBtn = [];
 var timeVar = document.querySelector(".timer-count")
+var correct = document.querySelector(".right-wrong")
+var done = document.querySelector(".over")
+var ini = document.querySelector(".initials")
 var secondsLeft = 75;
 var timer;
-var countRight;
-var countWrong;
+var countRight = 0;
+var countWrong = 0;
+var finalScore;
+var content = document.querySelector('.here')
 var quizContainer = document.createElement('div');
 var startQuizEl = document.createElement('button')
 startQuizEl.textContent = "start quiz"
@@ -45,23 +52,109 @@ quizContainer.appendChild(startQuizEl)
 document.querySelector('main').appendChild(quizContainer)
 
 
+function nextQuestion(){
+    document.querySelector('main').innerHTML = '';
+    var currentQuestions = questions[currentQuestioni]
+    var titleEl = document.createElement('h2');
+    titleEl.textContent = currentQuestions.title;
+    content.appendChild(titleEl);
+    for (var i = 0; i < currentQuestions.choices.length; i++){
+        var optionEl = document.createElement('button')
+        optionEl.setAttribute('id','button')
+        optionEl.textContent = currentQuestions.choices[i];
+        content.appendChild(optionEl);
 
-  startQuizEl.addEventListener("click", function(event){
-    secondsLeft = 75
-    timer = setInterval(function (){
-        secondsLeft--;
-        console.log(secondsLeft);
-        timeVar.textContent = secondsLeft;
-        if (secondsLeft === 0){
-            clearInterval(timer)
-            document.querySelector('main').innerHTML = '';
-            var over = document.createElement('h1')
-            over.textContent = "Game Over"
+    }
+}
 
 
-        }
-    },1000)
+content.addEventListener("click", function(event){
+  event.preventDefault()
+  var currentQuestions = questions[currentQuestioni]
+  if (event.target.matches('#button')){
+      console.log(event.target.textContent)
+      console.log(currentQuestions.answer)
+      if(event.target.textContent === currentQuestions.answer){
+        content.innerHTML = '';
+        countRight++
+        currentQuestioni++
+        console.log('got it')
+        correct.textContent = 'correct'
+      }
+      else {
+        content.innerHTML = '';
+        correct.textContent = 'wrong'
+        console.log('wrong')
+        countWrong--
+        secondsLeft -= 10
+        timeVar.textContent = secondsLeft
+        currentQuestioni++
+      }
+      if(currentQuestioni < questions.length){
+        console.log('works')
+        nextQuestion()
+    } else {
+      end()
+    }
+  }
   })
 
 
+function end(){
+    document.querySelector('main').innerHTML = '';
+    document.querySelector('section').innerHTML = '';
+    document.querySelector('header').innerHTML = '';
+    correct.innerHTML = '';
+    clearInterval(timer)
+    var over = document.createElement('h1')
+    over.textContent = "All Done"
+    var score = document.createElement('p')
+    score.textContent = "Your final score is: " + countRight;
+    over.appendChild(score)
+    done.appendChild(over)
+}
+startQuizEl.addEventListener("click",function(event){
+    event.preventDefault()
+    nextQuestion(questions[0])
+      secondsLeft = 75
+      timer = setInterval(function (){
+          secondsLeft--;
+          console.log(secondsLeft);
+          timeVar.textContent = secondsLeft; 
+          if (secondsLeft === 0){
+              clearInterval(timer)
+              end()
+          }
+      },1000)
+  })
 
+function highScores(event){
+  event.preventDefault();
+  if(ini.value === ""){
+    alert('Enter your initials')
+    return;
+  }
+
+  var savedHighSchores = localStorage.getItem("high scores");
+  var scoresArr;
+
+  if(savedHighSchores === null){
+    scoresArr = []
+  } else {
+    scoresArr = JSON.parse(savedHighSchores)
+  }
+
+  var user = {
+    initials: ini.value,
+    scores: finalScore.textContent
+  };
+
+  console.log(user);
+  scoresArr.push(user)
+
+  var string = JSON.stringify(scoresArr);
+  window.localStorage.setItem("high scores", string);
+
+
+}   
+ 

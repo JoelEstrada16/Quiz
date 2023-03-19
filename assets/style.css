@@ -4,7 +4,14 @@ main{
     position: relative;
     margin-left: 300px;
     margin-right: 300px;
-    border:solid black
+}
+
+section{
+    text-align: center;
+    margin-top: 150px;
+    position: relative;
+    margin-left: 300px;
+    margin-right: 300px;
 }
 
 div button{
@@ -12,12 +19,15 @@ div button{
     height: 48px;
     margin-left: 10px;
 }
-.timer-count{
-    text-align: end;
-    margin-top: -304px;
-    margin-right: 18px;
+header h1{
+    text-align: center;
+    margin-top: 150px;
+    position: relative;
+    margin-left: 300px;
+    margin-right: 300px;
 }
-header h3{
+
+header{
     text-align: end;
-    margin-top: -2px;
 }
+
