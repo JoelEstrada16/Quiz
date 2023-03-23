@@ -1,4 +1,3 @@
-// list of all questions, choices, and answers
 var questions = [
     {
       title: 'Commonly used data types DO NOT include:',
@@ -39,10 +38,14 @@ var timeVar = document.querySelector(".timer-count")
 var correct = document.querySelector(".right-wrong")
 var done = document.querySelector(".over")
 var ini = document.querySelector(".initials")
+var initialInput = document.querySelector(".initialInput")
+var highScoreList = document.querySelector(".highScoreList")
+var finalScores = document.querySelector(".finalScore")
+var submit = document.querySelector("#submitButton")
+var view = document.querySelector(".view")
 var secondsLeft = 75;
 var timer;
 var countRight = 0;
-var countWrong = 0;
 var finalScore;
 var content = document.querySelector('.here')
 var quizContainer = document.createElement('div');
@@ -52,8 +55,11 @@ quizContainer.appendChild(startQuizEl)
 document.querySelector('main').appendChild(quizContainer)
 
 
+
+
 function nextQuestion(){
     document.querySelector('main').innerHTML = '';
+    initialInput.textContent = ""
     var currentQuestions = questions[currentQuestioni]
     var titleEl = document.createElement('h2');
     titleEl.textContent = currentQuestions.title;
@@ -65,7 +71,7 @@ function nextQuestion(){
         content.appendChild(optionEl);
 
     }
-}
+  }
 
 
 content.addEventListener("click", function(event){
@@ -85,7 +91,6 @@ content.addEventListener("click", function(event){
         content.innerHTML = '';
         correct.textContent = 'wrong'
         console.log('wrong')
-        countWrong--
         secondsLeft -= 10
         timeVar.textContent = secondsLeft
         currentQuestioni++
@@ -111,42 +116,29 @@ function end(){
     var score = document.createElement('p')
     score.textContent = "Your final score is: " + countRight;
     over.appendChild(score)
-    done.appendChild(over)
+    highScoreList.appendChild(over)
+    
 }
-startQuizEl.addEventListener("click",function(event){
-    event.preventDefault()
-    nextQuestion(questions[0])
-      secondsLeft = 75
-      timer = setInterval(function (){
-          secondsLeft--;
-          console.log(secondsLeft);
-          timeVar.textContent = secondsLeft; 
-          if (secondsLeft === 0){
-              clearInterval(timer)
-              end()
-          }
-      },1000)
-  })
 
 function highScores(event){
   event.preventDefault();
-  if(ini.value === ""){
-    alert('Enter your initials')
+  if(!initialInput.value){
+    alert("Enter your initials")
     return;
   }
-
+ 
   var savedHighSchores = localStorage.getItem("high scores");
   var scoresArr;
 
   if(savedHighSchores === null){
-    scoresArr = []
+    scoresArr = [];
   } else {
     scoresArr = JSON.parse(savedHighSchores)
   }
 
   var user = {
-    initials: ini.value,
-    scores: finalScore.textContent
+    initials: initialInput.value,
+    score: highScoreList.textContent = countRight
   };
 
   console.log(user);
@@ -155,6 +147,42 @@ function highScores(event){
   var string = JSON.stringify(scoresArr);
   window.localStorage.setItem("high scores", string);
 
-
+displayScore ()
 }   
- 
+
+var i = 0
+function displayScore(){
+  var storedScores = localStorage.getItem("high scores")
+
+  if (storedScores === null){
+    return;
+  }
+  var savedScores = JSON.parse(storedScores)
+
+  for (;i < savedScores.length; i++){
+    var eachScore = document.createElement("p");
+    eachScore.innerHTML = savedScores[i].initials + ": " + savedScores[i].score;
+    highScoreList.appendChild(eachScore);
+  }
+}
+startQuizEl.addEventListener("click",function(event){
+  event.preventDefault()
+  nextQuestion(questions[0])
+    secondsLeft = 75
+    timer = setInterval(function (){
+        secondsLeft--;
+        console.log(secondsLeft);
+        timeVar.textContent = secondsLeft; 
+        if (secondsLeft === 0){
+            clearInterval(timer)
+            end()
+        }
+    },1000)
+})
+view.addEventListener("click", function(evet){
+  displayScore()
+
+})
+submit.addEventListener("click", function(event){
+  highScores(event)
+})
