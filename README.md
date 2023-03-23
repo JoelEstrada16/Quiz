@@ -10,5 +10,7 @@
 
 ## Link
 
+https://joelestrada16.github.io/Quiz/
+
 ## License
 Please refer to the license in the repo
